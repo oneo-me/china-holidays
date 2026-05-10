@@ -6,7 +6,7 @@
 }
 
 body {
-  background-color: var(--muted);
+  background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
   user-select: none;

@@ -13,21 +13,6 @@
   );
   const currentYearEvents = $derived(data.eventsByYear[selectedYear] || []);
 
-  const monthNames = [
-    '一月',
-    '二月',
-    '三月',
-    '四月',
-    '五月',
-    '六月',
-    '七月',
-    '八月',
-    '九月',
-    '十月',
-    '十一月',
-    '十二月',
-  ];
-
   function formatDate(dateStr: string): string {
     const date = new Date(dateStr);
     return `${date.getMonth() + 1}月${date.getDate()}日`;
@@ -45,11 +30,23 @@
     source: string;
   }) {
     if (event.isHoliday)
-      return { text: '休', class: 'bg-green-100 text-green-800' };
+      return {
+        text: '休',
+        bg: 'bg-success/12',
+        textColor: 'text-success',
+      };
     if (event.isWorkday)
-      return { text: '班', class: 'bg-orange-100 text-orange-800' };
+      return {
+        text: '班',
+        bg: 'bg-warning/12',
+        textColor: 'text-warning',
+      };
     if (event.source === 'extra')
-      return { text: '补', class: 'bg-blue-100 text-blue-800' };
+      return {
+        text: '补',
+        bg: 'bg-primary/12',
+        textColor: 'text-primary',
+      };
     return null;
   }
 
@@ -67,27 +64,25 @@
     content="中国节假日日历订阅服务，包含法定节假日、调休安排及更多节日" />
 </svelte:head>
 
-<div class="max-w-4xl mx-auto px-4 py-8">
-  <header class="mb-8">
-    <h1 class="text-3xl font-bold mb-2">中国节假日日历</h1>
-    <p class="text-muted-foreground">
+<div class="max-w-4xl mx-auto px-6 py-5">
+  <header class="mb-3">
+    <h1 class="text-lg font-semibold mb-0.5">中国节假日日历</h1>
+    <p class="text-xs text-muted-foreground">
       包含法定节假日、调休安排、西方节日、网络节日及传统节日
     </p>
   </header>
 
-  <!-- 订阅卡片 -->
-  <div class="bg-card border rounded-lg p-6 mb-8">
-    <h2 class="text-xl font-semibold mb-4">订阅日历</h2>
-    <div class="flex flex-col sm:flex-row gap-4">
+  <div class="mb-3 p-3 bg-card border rounded-[10px]">
+    <div class="flex items-center gap-3">
       <input
         type="text"
         readonly
         value="{typeof window !== 'undefined' ? window.location.origin : ''}/calendars.ics"
-        class="flex-1 px-4 py-2 bg-muted border rounded-md text-sm font-mono" />
+        class="flex-1 px-2.5 h-7 bg-muted border rounded-[8px] text-xs font-mono" />
       <button
         type="button"
         onclick={copyToClipboard}
-        class="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity">
+        class="px-3 h-7 bg-primary text-primary-foreground rounded-[10px] text-xs font-medium transition-colors duration-150 active:scale-[0.97] hover:opacity-90 shrink-0">
         复制链接
       </button>
     </div>
@@ -95,109 +90,51 @@
     <button
       type="button"
       onclick={() => showSubscribeInfo = !showSubscribeInfo}
-      class="mt-4 text-sm text-muted-foreground hover:text-foreground underline">
-      {showSubscribeInfo ? '收起订阅说明' : '如何订阅？'}
+      class="mt-2 text-xs text-muted-foreground hover:text-foreground underline">
+      {showSubscribeInfo ? '收起' : '如何订阅？'}
     </button>
 
     {#if showSubscribeInfo}
-      <div class="mt-4 p-4 bg-muted rounded-md text-sm">
-        <h3 class="font-semibold mb-2">iOS / macOS 日历</h3>
-        <ol class="list-decimal list-inside space-y-1 mb-4">
-          <li>打开"设置" → "日历" → "账户"</li>
-          <li>选择"添加账户" → "其他"</li>
-          <li>选择"添加已订阅的日历"</li>
-          <li>粘贴上方的订阅链接</li>
+      <div class="mt-2 p-2.5 bg-muted rounded-[8px] text-xs">
+        <h3 class="font-semibold text-[11px] mb-1.5">iOS / macOS 日历</h3>
+        <ol class="list-decimal list-inside space-y-0.5 mb-3">
+          <li>打开系统「设置」→ App → 日历 → 日历账户</li>
+          <li>选择「添加账户」→ 其他</li>
+          <li>选择「添加已订阅的日历」</li>
+          <li>粘贴上方链接，点击订阅</li>
         </ol>
 
-        <h3 class="font-semibold mb-2">Google Calendar</h3>
-        <ol class="list-decimal list-inside space-y-1">
+        <h3 class="font-semibold text-[11px] mb-1.5">Google Calendar</h3>
+        <ol class="list-decimal list-inside space-y-0.5">
           <li>打开 Google Calendar 网页版</li>
-          <li>点击左侧"其他日历"旁的"+"</li>
-          <li>选择"通过网址添加"</li>
-          <li>粘贴上方的订阅链接</li>
+          <li>左侧「其他日历」旁点击 +</li>
+          <li>选择「通过网址添加」</li>
+          <li>粘贴上方链接，点击添加日历</li>
         </ol>
       </div>
     {/if}
   </div>
 
-  <!-- 统计信息 -->
-  {#if data.error}
-    <div
-      class="bg-destructive/10 border border-destructive rounded-lg p-4 mb-8">
-      <p class="text-destructive">{data.error}</p>
-    </div>
-  {:else}
-    <div class="flex gap-4 mb-6 flex-wrap">
-      <div class="bg-card border rounded-lg px-4 py-2">
-        <span class="text-muted-foreground text-sm">总计</span>
-        <span class="ml-2 font-semibold">{data.totalCount}个节日</span>
-      </div>
-      <div class="bg-card border rounded-lg px-4 py-2">
-        <span class="text-muted-foreground text-sm">当年</span>
-        <span class="ml-2 font-semibold">{currentYearEvents.length}个节日</span>
-      </div>
-    </div>
-  {/if}
-
-  <!-- 年份选择 -->
-  <div class="flex gap-2 mb-6 flex-wrap">
-    {#each years as year}
-      <button
-        type="button"
-        onclick={() => selectedYear = year}
-        class="px-4 py-2 rounded-md transition-colors {selectedYear === year
-          ? 'bg-primary text-primary-foreground'
-          : 'bg-card border hover:bg-muted'}">
-        {year}
-      </button>
-    {/each}
-  </div>
-
-  <!-- 节日列表 -->
-  <div class="space-y-2">
-    {#each currentYearEvents as event (event.uid)}
-      {@const badge = getEventBadge(event)}
-      <div
-        class="flex items-center gap-4 p-3 bg-card border rounded-lg hover:bg-muted/50 transition-colors">
-        <div class="w-20 text-sm text-muted-foreground">
-          {formatDate(event.date)}
-        </div>
-        <div class="w-12 text-sm text-muted-foreground">
-          {getWeekday(event.date)}
-        </div>
-        <div class="flex-1 font-medium">{event.summary}</div>
-        {#if badge}
-          <span class="px-2 py-0.5 text-xs rounded {badge.class}">
-            {badge.text}
-          </span>
-        {/if}
-        {#if event.description}
-          <span class="text-xs text-muted-foreground hidden sm:inline">
-            {event.description}
-          </span>
-        {/if}
-      </div>
-    {/each}
-  </div>
-
-  <!-- 图例 -->
-  <div class="mt-8 p-4 bg-muted rounded-lg">
-    <h3 class="font-semibold mb-2">图例说明</h3>
-    <div class="flex flex-wrap gap-4 text-sm">
-      <div class="flex items-center gap-2">
-        <span class="px-2 py-0.5 text-xs rounded bg-green-100 text-green-800"
+  <div class="mb-3 p-3 bg-muted rounded-[10px]">
+    <h3 class="text-xs font-semibold mb-2">图例</h3>
+    <div class="flex flex-wrap gap-3 text-xs">
+      <div class="flex items-center gap-1.5">
+        <span
+          class="px-1.5 py-px text-[11px] rounded-[6px] font-medium bg-success/12 text-success"
           >休</span
         >
         <span>法定假日</span>
       </div>
-      <div class="flex items-center gap-2">
-        <span class="px-2 py-0.5 text-xs rounded bg-orange-100 text-orange-800"
+      <div class="flex items-center gap-1.5">
+        <span
+          class="px-1.5 py-px text-[11px] rounded-[6px] font-medium bg-warning/12 text-warning"
           >班</span
         >
         <span>调休上班</span>
       </div>
-      <div class="flex items-center gap-2">
-        <span class="px-2 py-0.5 text-xs rounded bg-blue-100 text-blue-800"
+      <div class="flex items-center gap-1.5">
+        <span
+          class="px-1.5 py-px text-[11px] rounded-[6px] font-medium bg-primary/12 text-primary"
           >补</span
         >
         <span>补充节日</span>
@@ -205,7 +142,67 @@
     </div>
   </div>
 
-  <footer class="mt-12 text-center text-sm text-muted-foreground">
+  {#if data.error}
+    <div
+      class="bg-destructive/10 border border-destructive rounded-[10px] p-3 mb-4">
+      <p class="text-destructive text-xs">{data.error}</p>
+    </div>
+  {:else}
+    <div class="flex gap-2 mb-3 flex-wrap">
+      <div class="bg-card border rounded-[10px] px-3 py-1.5">
+        <span class="text-[11px] text-muted-foreground">总计</span>
+        <span class="ml-2 text-lg font-semibold">{data.totalCount}个节日</span>
+      </div>
+      <div class="bg-card border rounded-[10px] px-3 py-1.5">
+        <span class="text-[11px] text-muted-foreground">当年</span>
+        <span class="ml-2 text-lg font-semibold"
+          >{currentYearEvents.length}个节日</span
+        >
+      </div>
+    </div>
+  {/if}
+
+  <div class="flex gap-1.5 mb-4 flex-wrap">
+    {#each years as year}
+      <button
+        type="button"
+        onclick={() => selectedYear = year}
+        class="px-3 h-7 rounded-[10px] text-xs font-medium transition-colors duration-150 active:scale-[0.97] {selectedYear === year
+          ? 'bg-primary text-primary-foreground'
+          : 'bg-card border hover:bg-muted'}">
+        {year}
+      </button>
+    {/each}
+  </div>
+
+  <div class="space-y-1">
+    {#each currentYearEvents as event (event.uid)}
+      {@const badge = getEventBadge(event)}
+      <div
+        class="flex items-center gap-3 py-1.5 px-3 bg-card border rounded-[8px] hover:bg-muted transition-colors duration-150">
+        <div class="w-16 text-xs text-muted-foreground">
+          {formatDate(event.date)}
+        </div>
+        <div class="w-10 text-[11px] text-muted-foreground">
+          {getWeekday(event.date)}
+        </div>
+        <div class="flex-1 text-xs">{event.summary}</div>
+        {#if badge}
+          <span
+            class="px-1.5 py-px text-[11px] rounded-[6px] font-medium {badge.bg} {badge.textColor}">
+            {badge.text}
+          </span>
+        {/if}
+        {#if event.description}
+          <span class="text-[11px] text-muted-foreground hidden sm:inline">
+            {event.description}
+          </span>
+        {/if}
+      </div>
+    {/each}
+  </div>
+
+  <footer class="mt-6 text-center text-[11px] text-muted-foreground">
     <p>数据来源: Apple iCloud 中国节假日日历 + 补充节日</p>
   </footer>
 </div>
