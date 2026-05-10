@@ -3,7 +3,13 @@
  * 包括西方节日、网络节日、职业节日和传统节日
  */
 
-import { getLunarFestivalDate, getThanksgivingDate } from './lunar-calendar';
+import {
+  getFathersDayDate,
+  getLunarFestivalDate,
+  getMothersDayDate,
+  getThanksgivingDate,
+  getWinterSolsticeDate,
+} from './lunar-calendar';
 
 export interface Holiday {
   name: string;
@@ -63,6 +69,18 @@ function getFixedHolidays(year: number): Holiday[] {
       description: '"我爱你"谐音日',
     },
     {
+      name: '618购物节',
+      date: `${year}-06-18`,
+      category: 'internet',
+      description: '年中购物节',
+    },
+    {
+      name: '程序员节',
+      date: `${year}-10-24`,
+      category: 'internet',
+      description: '1024 程序员节',
+    },
+    {
       name: '双11购物节',
       date: `${year}-11-11`,
       category: 'internet',
@@ -100,6 +118,14 @@ function getFixedHolidays(year: number): Holiday[] {
       category: 'professional',
       description: '中国教师节',
     },
+
+    // 其他
+    {
+      name: '元旦前夜',
+      date: `${year}-12-31`,
+      category: 'western',
+      description: '跨年夜',
+    },
   ];
 }
 
@@ -108,6 +134,18 @@ function getFixedHolidays(year: number): Holiday[] {
  */
 function getFloatingHolidays(year: number): Holiday[] {
   return [
+    {
+      name: '母亲节',
+      date: getMothersDayDate(year),
+      category: 'western',
+      description: '每年五月第二个星期日',
+    },
+    {
+      name: '父亲节',
+      date: getFathersDayDate(year),
+      category: 'western',
+      description: '每年六月第三个星期日',
+    },
     {
       name: '感恩节',
       date: getThanksgivingDate(year),
@@ -123,6 +161,28 @@ function getFloatingHolidays(year: number): Holiday[] {
 function getLunarHolidays(year: number): Holiday[] {
   const holidays: Holiday[] = [];
 
+  // 元宵
+  const yuanxiaoDate = getLunarFestivalDate('yuanxiao', year);
+  if (yuanxiaoDate) {
+    holidays.push({
+      name: '元宵节',
+      date: yuanxiaoDate,
+      category: 'traditional',
+      description: '农历正月十五',
+    });
+  }
+
+  // 二月二龙抬头
+  const longtaitouDate = getLunarFestivalDate('longtaitou', year);
+  if (longtaitouDate) {
+    holidays.push({
+      name: '龙抬头',
+      date: longtaitouDate,
+      category: 'traditional',
+      description: '农历二月初二',
+    });
+  }
+
   // 七夕
   const qixiDate = getLunarFestivalDate('qixi', year);
   if (qixiDate) {
@@ -133,6 +193,37 @@ function getLunarHolidays(year: number): Holiday[] {
       description: '中国情人节',
     });
   }
+
+  // 中元
+  const zhongyuanDate = getLunarFestivalDate('zhongyuan', year);
+  if (zhongyuanDate) {
+    holidays.push({
+      name: '中元节',
+      date: zhongyuanDate,
+      category: 'traditional',
+      description: '农历七月十五',
+    });
+  }
+
+  // 重阳
+  const chongyangDate = getLunarFestivalDate('chongyang', year);
+  if (chongyangDate) {
+    holidays.push({
+      name: '重阳节',
+      date: chongyangDate,
+      category: 'traditional',
+      description: '农历九月初九',
+    });
+  }
+
+  // 冬至
+  const dongzhiDate = getWinterSolsticeDate(year);
+  holidays.push({
+    name: '冬至',
+    date: dongzhiDate,
+    category: 'traditional',
+    description: '二十四节气之冬至',
+  });
 
   // 腊八节
   const labaDate = getLunarFestivalDate('laba', year);
@@ -164,17 +255,6 @@ function getLunarHolidays(year: number): Holiday[] {
       date: xiaonianSouthDate,
       category: 'traditional',
       description: '农历腊月二十四',
-    });
-  }
-
-  // 二月二龙抬头
-  const longtaitouDate = getLunarFestivalDate('longtaitou', year);
-  if (longtaitouDate) {
-    holidays.push({
-      name: '龙抬头',
-      date: longtaitouDate,
-      category: 'traditional',
-      description: '农历二月初二',
     });
   }
 

@@ -85,6 +85,7 @@
         value="{typeof window !== 'undefined' ? window.location.origin : ''}/calendars.ics"
         class="flex-1 px-4 py-2 bg-muted border rounded-md text-sm font-mono" />
       <button
+        type="button"
         onclick={copyToClipboard}
         class="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity">
         复制链接
@@ -92,6 +93,7 @@
     </div>
 
     <button
+      type="button"
       onclick={() => showSubscribeInfo = !showSubscribeInfo}
       class="mt-4 text-sm text-muted-foreground hover:text-foreground underline">
       {showSubscribeInfo ? '收起订阅说明' : '如何订阅？'}
@@ -141,6 +143,7 @@
   <div class="flex gap-2 mb-6 flex-wrap">
     {#each years as year}
       <button
+        type="button"
         onclick={() => selectedYear = year}
         class="px-4 py-2 rounded-md transition-colors {selectedYear === year
           ? 'bg-primary text-primary-foreground'

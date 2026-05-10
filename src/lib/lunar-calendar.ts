@@ -48,7 +48,10 @@ export function getLunarFestivalDate(
     | 'laba'
     | 'xiaonian_north'
     | 'xiaonian_south'
-    | 'longtaitou',
+    | 'longtaitou'
+    | 'yuanxiao'
+    | 'chongyang'
+    | 'zhongyuan',
   year: number,
 ): string | null {
   try {
@@ -59,6 +62,9 @@ export function getLunarFestivalDate(
       xiaonian_north: { month: 12, day: 23 }, // 小年北方 - 农历腊月二十三
       xiaonian_south: { month: 12, day: 24 }, // 小年南方 - 农历腊月二十四
       longtaitou: { month: 2, day: 2 }, // 二月二 - 农历二月初二
+      yuanxiao: { month: 1, day: 15 }, // 元宵 - 农历正月十五
+      chongyang: { month: 9, day: 9 }, // 重阳 - 农历九月初九
+      zhongyuan: { month: 7, day: 15 }, // 中元 - 农历七月十五
     };
 
     const config = festivals[festival];
@@ -78,6 +84,28 @@ export function getLunarFestivalDate(
 }
 
 /**
+ * 获取冬至日期（公历12月21-22日）
+ * 使用 lunar-javascript 的节气表精确计算
+ */
+export function getWinterSolsticeDate(year: number): string {
+  // 第 Y+1 年的农历节气表覆盖了第 Y 年 12 月的冬至
+  const lunar = Lunar.fromYmd(year + 1, 6, 1);
+  if (!lunar) {
+    // 降级：使用近似日期
+    return `${year}-12-21`;
+  }
+
+  const jieQiTable = lunar.getJieQiTable();
+  const dongzhi = jieQiTable.冬至;
+  if (!dongzhi?._p) {
+    return `${year}-12-21`;
+  }
+
+  const { year: y, month, day } = dongzhi._p;
+  return `${y}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+}
+
+/**
  * 获取感恩节日期 (11月第四个星期四)
  */
 export function getThanksgivingDate(year: number): string {
@@ -94,4 +122,35 @@ export function getThanksgivingDate(year: number): string {
   // 第四个星期四
   const thanksgiving = firstThursday + 21;
   return `${year}-11-${thanksgiving.toString().padStart(2, '0')}`;
+}
+
+/**
+ * 获取母亲节日期 (5月第二个星期日)
+ */
+export function getMothersDayDate(year: number): string {
+  return getNthWeekdayOfMonth(year, 5, 0, 2);
+}
+
+/**
+ * 获取父亲节日期 (6月第三个星期日)
+ */
+export function getFathersDayDate(year: number): string {
+  return getNthWeekdayOfMonth(year, 6, 0, 3);
+}
+
+/**
+ * 获取某月第 n 个星期几的日期
+ * @param weekday 0=周日, 1=周一, ..., 6=周六
+ * @param n 第 n 个
+ */
+function getNthWeekdayOfMonth(
+  year: number,
+  month: number,
+  weekday: number,
+  n: number,
+): string {
+  const firstDay = new Date(year, month - 1, 1);
+  const firstDayOfWeek = firstDay.getDay();
+  const dayOfMonth = 1 + ((weekday - firstDayOfWeek + 7) % 7) + (n - 1) * 7;
+  return `${year}-${month.toString().padStart(2, '0')}-${dayOfMonth.toString().padStart(2, '0')}`;
 }

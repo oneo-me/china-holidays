@@ -3,6 +3,17 @@
  */
 
 declare module 'lunar-javascript' {
+  export interface JieQi {
+    _p: {
+      year: number;
+      month: number;
+      day: number;
+      hour: number;
+      minute: number;
+      second: number;
+    };
+  }
+
   export class Solar {
     getYear(): number;
     getMonth(): number;
@@ -21,5 +32,6 @@ declare module 'lunar-javascript' {
     getMonth(): number;
     getDay(): number;
     isLeap(): boolean;
+    getJieQiTable(): Record<string, JieQi>;
   }
 }

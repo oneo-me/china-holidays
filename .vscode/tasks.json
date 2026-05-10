@@ -2,18 +2,18 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "run",
-      "command": "bun",
+      "label": "dev",
+      "command": "pnpm",
       "args": ["run", "dev"]
     },
     {
       "label": "build",
-      "command": "bun",
+      "command": "pnpm",
       "args": ["run", "build"]
     },
     {
-      "label": "test",
-      "command": "bun",
+      "label": "check",
+      "command": "pnpm",
       "args": ["run", "check"]
     }
   ]
