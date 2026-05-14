@@ -20,7 +20,7 @@
     "@types/node": "^24.12.3",
     "ical.js": "^2.2.1",
     "lunar-javascript": "^1.7.7",
-    "svelte": "^5.55.5",
+    "svelte": "^5.55.7",
     "svelte-check": "^4.4.8",
     "tailwindcss": "^4.3.0",
     "typescript": "^5.9.3",
