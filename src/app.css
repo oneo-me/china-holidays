@@ -1,19 +1,36 @@
 @import 'tailwindcss';
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
 @import './theme.css';
+
+@custom-variant dark (&:is(.dark *));
 
 :root {
   font-size: 14px;
 }
 
-body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans);
-  user-select: none;
-  -webkit-user-select: none;
-}
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
 
-::selection {
-  background-color: var(--primary);
-  color: var(--primary-foreground);
+  html {
+    color-scheme: light;
+    scroll-padding-top: 5rem;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  ::selection {
+    background: var(--selection);
+    color: var(--foreground);
+  }
 }

@@ -5,7 +5,24 @@
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>中国节假日（增强版）</title>
+    <meta
+      name="theme-color"
+      content="#f7f5f0"
+      media="(prefers-color-scheme: light)" />
+    <meta
+      name="theme-color"
+      content="#090e18"
+      media="(prefers-color-scheme: dark)" />
+    <script>
+      (() => {
+        var query = window.matchMedia('(prefers-color-scheme: dark)');
+        function apply() {
+          document.documentElement.classList.toggle('dark', query.matches);
+        }
+        apply();
+        query.addEventListener('change', apply);
+      })();
+    </script>
     %sveltekit.head%
   </head>
   <body>
