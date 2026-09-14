@@ -3,17 +3,17 @@
   "tasks": [
     {
       "label": "dev",
-      "command": "pnpm",
+      "command": "npm",
       "args": ["run", "dev"]
     },
     {
       "label": "build",
-      "command": "pnpm",
+      "command": "npm",
       "args": ["run", "build"]
     },
     {
       "label": "check",
-      "command": "pnpm",
+      "command": "npm",
       "args": ["run", "check"]
     }
   ]
