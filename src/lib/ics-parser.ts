@@ -19,6 +19,14 @@ export interface CalendarEvent {
 }
 
 /**
+ * 来源 ICS 内容及其拉取时间
+ */
+export interface FetchedICS {
+  content: string;
+  fetchedAt: number;
+}
+
+/**
  * 从 iCloud 获取 ICS 内容（带缓存）
  * @param url ICS 文件的 URL
  * @param ttl 缓存过期时间（毫秒），默认 12 小时
@@ -26,10 +34,10 @@ export interface CalendarEvent {
 export async function fetchICSFromURL(
   url: string,
   ttl = 12 * 3600000,
-): Promise<string> {
+): Promise<FetchedICS> {
   // 尝试从缓存获取
   const cacheKey = `ics:${url}`;
-  const cached = cache.get<string>(cacheKey);
+  const cached = cache.get<FetchedICS>(cacheKey);
 
   if (cached) {
     console.log(`[Cache] Hit for ${url}`);
@@ -50,13 +58,16 @@ export async function fetchICSFromURL(
     );
   }
 
-  const content = await response.text();
+  const entry: FetchedICS = {
+    content: await response.text(),
+    fetchedAt: Date.now(),
+  };
 
-  // 保存到缓存
-  cache.set(cacheKey, content, ttl);
+  // 保存到缓存，命中时也能取到同一次拉取的时间
+  cache.set(cacheKey, entry, ttl);
   console.log(`[Cache] Stored for ${url}, TTL: ${ttl / 3600000} hours`);
 
-  return content;
+  return entry;
 }
 
 /**
@@ -322,13 +333,21 @@ export function filterEventsByYears(
 }
 
 /**
+ * 站点使用的日历数据：事件集合与来源最近一次拉取的时间
+ */
+export interface CalendarData {
+  events: CalendarEvent[];
+  updatedAt: number;
+}
+
+/**
  * 从 iCloud 获取并处理完整的日历数据（只返回当前年份前后三年）
  */
 export async function getCalendarData(
   icloudUrl: string,
-): Promise<CalendarEvent[]> {
-  const icsContent = await fetchICSFromURL(icloudUrl);
-  const icloudEvents = parseICS(icsContent);
+): Promise<CalendarData> {
+  const { content, fetchedAt } = await fetchICSFromURL(icloudUrl);
+  const icloudEvents = parseICS(content);
 
   // 获取当前年份前后三年的范围
   const { startYear, endYear, years } = getYearRange();
@@ -337,7 +356,10 @@ export async function getCalendarData(
   const allEvents = mergeEvents(icloudEvents, startYear, endYear);
 
   // 只返回三年内的事件
-  return filterEventsByYears(allEvents, years);
+  return {
+    events: filterEventsByYears(allEvents, years),
+    updatedAt: fetchedAt,
+  };
 }
 
 /**

@@ -5,7 +5,7 @@ const ICLOUD_CN_URL = 'https://calendars.icloud.com/holidays/cn_zh.ics';
 
 export const GET: RequestHandler = async () => {
   try {
-    const events = await getCalendarData(ICLOUD_CN_URL);
+    const { events } = await getCalendarData(ICLOUD_CN_URL);
     const icsContent = generateICS(events, '中国节假日（增强版）');
 
     return new Response(icsContent, {

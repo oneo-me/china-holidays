@@ -9,13 +9,14 @@ const ICLOUD_CN_URL = 'https://calendars.icloud.com/holidays/cn_zh.ics';
 
 export const load: PageServerLoad = async () => {
   try {
-    const events = await getCalendarData(ICLOUD_CN_URL);
+    const { events, updatedAt } = await getCalendarData(ICLOUD_CN_URL);
     const eventsByYear = groupEventsByYear(events);
 
     return {
       events,
       eventsByYear,
       totalCount: events.length,
+      updatedAt,
       error: null,
     };
   } catch (error) {
@@ -24,8 +25,8 @@ export const load: PageServerLoad = async () => {
       events: [] as CalendarEvent[],
       eventsByYear: {} as Record<number, CalendarEvent[]>,
       totalCount: 0,
-      error:
-        error instanceof Error ? error.message : 'Failed to load calendar data',
+      updatedAt: null,
+      error: '暂时无法获取节假日数据。',
     };
   }
 };
